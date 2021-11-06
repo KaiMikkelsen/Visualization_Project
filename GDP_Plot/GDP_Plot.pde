@@ -116,9 +116,10 @@ void drawYAxisSteps()
   float lastYsuicides = Suicides[Suicides.length-1];
 
   //Figure out how to well represent the y axis numerical values
-  int topY = ceil(lastYsuicides/1000) * 1000;
-  int bottomY = floor(firstYSuicides/1000) * 1000;
-  float textStepSize = (topY - bottomY) / numberOfElements;
+  float topY = ceil(lastYsuicides/1000) * 1000;
+  float bottomY = floor(firstYSuicides/1000) * 1000;
+  float elements = 11;
+  float textStepSize = (topY - bottomY) / elements;
   
 
   //Figure out how to space the lines on the y axis

@@ -41,6 +41,15 @@ float largestSuicide = 0;
 
 float xStepSize = 0;
 
+int scrolledButton = 0;
+int permanentClickedButton = 0;
+
+int dataYearToShow = 0;
+
+int buttonScrollOrClickedFlag = 1;
+// 0 = scrolling
+// 1 = not scrolling
+
 void setup() {
   size(1500, 800); //These have to be matching xMainWindow and yMainWindow Global Variables
   background(255);
@@ -146,51 +155,71 @@ boolean overRect(int x, int y, int width, int height)  {
 void mouseOverButtons()
 {
   
-  for(int i = 0; i < numberOfYears; i++){
-    if(overRect((int) buttonXPositions[i], (int) individualyearButtonYStartingPoint, (int) individualYearButtonWidth, (int) individualyearButtonHeight))
-    {
+  if(overRect((int) buttonBarStartingPoint, (int) individualyearButtonYStartingPoint, (int) lengthOfButtonBar, (int) individualyearButtonHeight))
+  {
 
-       fill(200);
-       rect(buttonXPositions[i], individualyearButtonYStartingPoint, individualYearButtonWidth, individualyearButtonHeight); 
-       fill(0);
-       text(2005+i, buttonXPositions[i] + individualYearButtonWidth/2, individualyearButtonYStartingPoint + 30);
+    buttonScrollOrClickedFlag = 0;
+    for(int i = 0; i < numberOfYears; i++)
+    {
+      if(overRect((int) buttonXPositions[i], (int) individualyearButtonYStartingPoint, (int) individualYearButtonWidth, (int) individualyearButtonHeight))
+      {
+           scrolledButton = i;
+    
+      }
+
     }
+    
   }
+  else
+  {
+    buttonScrollOrClickedFlag = 1;
+  }
+  
+  
   
 }
 
 void mousePressed() 
 {
 
+
     for(int i = 0; i < numberOfYears; i++)
     {
       
-      if(overRect((int) buttonBarStartingPoint, (int) individualyearButtonYStartingPoint, (int) lengthOfButtonBar, (int) individualyearButtonHeight)){
         if(overRect((int) buttonXPositions[i], (int) individualyearButtonYStartingPoint, (int) individualYearButtonWidth, (int) individualyearButtonHeight))
         {
-            clickedButton[i] = 1;
+            permanentClickedButton = i;
         }
-        else
-        {
-          clickedButton[i] = 0;
-        
-        } 
+
       }
-    }
+
 }
 
 void clickedButton()
 {
-  for(int i = 0; i < numberOfYears; i++)
+  
+    fill(0);
+    rect(buttonXPositions[permanentClickedButton], individualyearButtonYStartingPoint, individualYearButtonWidth, individualyearButtonHeight);  
+    fill(255);
+    text(2005+permanentClickedButton, buttonXPositions[permanentClickedButton] + individualYearButtonWidth/2, individualyearButtonYStartingPoint + 30);
+  if(buttonScrollOrClickedFlag == 1) //not scrolling
   {
-    if(clickedButton[i] == 1)
-    {
-      fill(0);
-      rect(buttonXPositions[i], individualyearButtonYStartingPoint, individualYearButtonWidth, individualyearButtonHeight);  
-      fill(255);
-      text(2005+i, buttonXPositions[i] + individualYearButtonWidth/2, individualyearButtonYStartingPoint + 30);
-    }
-  } 
+    
+    dataYearToShow = permanentClickedButton;
+    
+    
+  }
+  else //scrolling
+  {
+    
+    fill(200);
+    rect(buttonXPositions[scrolledButton], individualyearButtonYStartingPoint, individualYearButtonWidth, individualyearButtonHeight); 
+    fill(0);
+    text(2005+scrolledButton, buttonXPositions[scrolledButton] + individualYearButtonWidth/2, individualyearButtonYStartingPoint + 30);
+
+    dataYearToShow = scrolledButton;
+
+}
 }
 
 
@@ -201,7 +230,6 @@ void drawAxis()
   
   //Y
   line(xStartPosition, yStartPosition , xStartPosition , yEndPosition);
-  text("jdjd", 120, 120);
   drawXAxisSteps();
   drawTopYAxisSteps();
   drawBottomYAxisSteps();
@@ -333,21 +361,16 @@ void drawSuicideBars()
  // println(barWidth);
   
   
-  for(int year = 0; year < numberOfYears; year++) 
-  {
-    
-    if(clickedButton[year] == 1)
-    {
+
       for(int ageRange = 0; ageRange < numberOfRanges; ageRange++)
       {
-        float suicideHeight = map(suicideRangeArray[year][ageRange], 0, largestSuicide, 0, yAxisLength/2);
+        float suicideHeight = map(suicideRangeArray[dataYearToShow][ageRange], 0, largestSuicide, 0, yAxisLength/2);
         fill(100);
         rect((xStartPosition + ((ageRange) * xStepSize)) + (((1-percentageWidth)/2) * xStepSize), yAxisMiddlePoint ,barWidth, -suicideHeight);
       
       }  
     
-    }
-  }
+   
   
 }
   
@@ -359,22 +382,15 @@ void drawSocialMediaBars()
  // println(barWidth);
   
   
-  for(int year = 0; year < numberOfYears; year++) 
-  {
-    
-    if(clickedButton[year] == 1)
-    {
+
       for(int ageRange = 0; ageRange < numberOfRanges; ageRange++)
       {
-        float suicideHeight = map(socialMediaRangeArray[year][ageRange], 0, 100, 0, yAxisLength/2);
+        float suicideHeight = map(socialMediaRangeArray[dataYearToShow][ageRange], 0, 100, 0, yAxisLength/2);
         fill(200);
         rect((xStartPosition + ((ageRange) * xStepSize)) + (((1-percentageWidth)/2) * xStepSize), yAxisMiddlePoint ,barWidth, suicideHeight);
       
       }  
-    
-    }
-  }
-  
+
 
 }
 
